@@ -1,0 +1,42 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "marketforces-dashboard",
+	"main": "server/worker.ts",
+	// The newest date the pinned wrangler's local runtime (workerd 1.20261012.1) supports, so `wrangler dev` and the
+	// deployed Worker run the same behaviour. No compatibility flags: the Worker uses no Node.js APIs.
+	"compatibility_date": "2026-10-12",
+
+	// The app lives at /marketforces-dashboard on both company domains. A route takes precedence over each domain's
+	// Custom Domain Worker, so the rest of caelos.app and novacaelum.com stays where it is.
+	"routes": [
+		{ "pattern": "caelos.app/marketforces-dashboard*", "zone_name": "caelos.app" },
+		{ "pattern": "novacaelum.com/marketforces-dashboard*", "zone_name": "novacaelum.com" }
+	],
+	"workers_dev": false,
+	"preview_urls": false,
+
+	// The built client. Vite writes it to dist/client/marketforces-dashboard/, so each file's path is its URL and the
+	// assets router serves it without running the Worker. The Worker runs first only for the API and the bare base
+	// path (a 301 to the trailing slash); a request that matches no file falls through to it (SPA fallback or 404).
+	"assets": {
+		"directory": "./dist/client",
+		"binding": "ASSETS",
+		"run_worker_first": ["/marketforces-dashboard", "/marketforces-dashboard/api/*"]
+	},
+
+	// Rate limits for the chat, shared by every isolate: one SQLite-backed Durable Object (server/limiter-do.ts).
+	"durable_objects": {
+		"bindings": [{ "name": "CHAT_LIMITER", "class_name": "ChatLimiter" }]
+	},
+	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["ChatLimiter"] }],
+
+	// Plain configuration. Secrets are not here: OPENROUTER_API_KEY, TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are
+	// Worker secrets (`wrangler secret put`), and .dev.vars locally (see .dev.vars.example).
+	"vars": {
+		"CHAT_LIMIT_PER_MINUTE": "6",
+		"CHAT_LIMIT_PER_DAY": "200",
+		"OPENROUTER_MODEL": "deepseek/deepseek-v4.1-flash",
+		"OPENROUTER_BASE_URL": "https://openrouter.ai/api/v1",
+		"MARKET_PROVIDER": "yahoo"
+	}
+}

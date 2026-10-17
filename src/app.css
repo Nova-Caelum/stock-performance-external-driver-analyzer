@@ -1,0 +1,752 @@
+/* Host layout only. Materials, typography and states come from @nova-caelum/ui recipes and tokens;
+   tokens are scoped to [data-caelos-theme], which is the .mcd-root element itself. */
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  color-scheme: dark;
+  background: Canvas;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mcd-root {
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 288px minmax(0, 1fr);
+  grid-template-rows: 72px minmax(0, 1fr);
+  grid-template-areas:
+    "header header"
+    "sidebar workspace";
+  overflow: hidden;
+  background: var(--sys-ground);
+  color: var(--sys-text-primary);
+  font-family: var(--font-nova-sans, "IBM Plex Sans"), sans-serif;
+  font-size: var(--sys-type-body);
+}
+
+.mcd-root :where(p, h1, h2, ul) {
+  margin: 0;
+}
+
+/* ---- Header (chrome) ---- */
+
+/* The band is tall enough that the wordmark keeps clear space at least its own cap height on every side. */
+.mcd-header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  gap: var(--sys-space-7);
+  padding: 0 var(--sys-space-7) 0 var(--sys-space-7);
+  border-bottom: 1px solid var(--sys-hair-1);
+}
+
+/* Approved artwork: proportional scaling only, never recoloured or retyped. */
+.mcd-wordmark {
+  display: block;
+  flex-shrink: 0;
+}
+
+.mcd-header-rule {
+  align-self: center;
+  height: 28px;
+}
+
+.mcd-product {
+  white-space: nowrap;
+}
+
+.mcd-source {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ---- Watchlist (chrome) ---- */
+
+.mcd-sidebar {
+  grid-area: sidebar;
+  display: flex;
+  min-height: 0;
+  border-right: 1px solid var(--sys-hair-1);
+}
+
+.mcd-watchlist {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-4);
+  /* The right inset equals ScrollArea's 23px scrollbar lane, so every row of the column shares one edge. */
+  padding: var(--sys-space-6) 23px var(--sys-space-5) var(--sys-space-4);
+}
+
+.mcd-watchlist-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 var(--sys-space-3);
+}
+
+.mcd-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.mcd-add-wrap {
+  position: relative;
+}
+
+.mcd-add {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-space-2);
+}
+
+.mcd-add-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Match the field's height so the add row reads as one control. */
+.mcd-add-button {
+  align-self: stretch;
+  height: auto;
+}
+
+/* Suggestions: the library's menu material, laid out as a listbox under the field (focus stays in the field). */
+.mcd-suggest {
+  position: absolute;
+  top: calc(100% + var(--sys-space-2));
+  left: 0;
+  right: 0;
+  z-index: 30;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+}
+
+.mcd-suggest-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--sys-space-4);
+  row-gap: 1px;
+  padding: 7px 10px;
+}
+
+.mcd-suggest-symbol {
+  font-family: var(--font-nova-mono, "IBM Plex Mono"), monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  word-spacing: normal;
+  color: var(--sys-text-primary);
+}
+
+.mcd-suggest-exchange {
+  justify-self: end;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--sys-text-secondary);
+  white-space: nowrap;
+}
+
+.mcd-suggest-name {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--sys-type-caption);
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--sys-text-secondary);
+}
+
+.mcd-suggest-item[data-highlighted] .mcd-suggest-name {
+  color: var(--sys-text-primary);
+}
+
+.mcd-add-error {
+  margin-top: calc(-1 * var(--sys-space-2));
+  padding: 0 var(--sys-space-3);
+  color: var(--sys-sem-danger-on-tint);
+}
+
+.mcd-watchlist-scroll {
+  flex: 1;
+  min-height: 0;
+  margin: 0 -23px 0 calc(-1 * var(--sys-space-2));
+}
+
+.mcd-rows {
+  box-sizing: border-box;
+  width: 100%;
+  list-style: none;
+  padding: 0 0 0 var(--sys-space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mcd-empty {
+  padding: var(--sys-space-4) var(--sys-space-3);
+}
+
+.mcd-watchlist-foot {
+  padding: 0 var(--sys-space-3);
+}
+
+.mcd-row {
+  position: relative;
+}
+
+.mcd-row-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--sys-space-4);
+  row-gap: 1px;
+}
+
+/* Ticker symbols are coordinates: mono, exact, quiet until selected. */
+.mcd-row-symbol {
+  font-family: var(--font-nova-mono, "IBM Plex Mono"), monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.mcd-row-price {
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+  color: var(--sys-text-primary);
+}
+
+.mcd-row-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--sys-type-caption);
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--sys-text-secondary); /* 12px text needs AA on chrome; tertiary is ~4.2:1 */
+}
+
+.mcd-row-change {
+  justify-self: end;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  transition: opacity var(--sys-motion-fast) var(--sys-ease-out);
+}
+
+.mcd-row-badge {
+  padding: 1px 7px;
+  border-radius: var(--sys-radius-sm);
+  font-variant-numeric: tabular-nums;
+  line-height: 20px;
+}
+
+/* Remove sits where the change chip is and replaces it on hover; it stays reachable by keyboard. */
+.mcd-row-remove {
+  position: absolute;
+  right: var(--sys-space-3);
+  bottom: 7px;
+  opacity: 0;
+  transition: opacity var(--sys-motion-fast) var(--sys-ease-out);
+}
+
+.mcd-row:hover .mcd-row-remove,
+.mcd-row-remove:focus-visible {
+  opacity: 1;
+}
+
+.mcd-row:hover .mcd-row-change,
+.mcd-row:has(.mcd-row-remove:focus-visible) .mcd-row-change {
+  opacity: 0;
+}
+
+@media (hover: none) {
+  .mcd-row-remove {
+    opacity: 1;
+  }
+  .mcd-row-change {
+    opacity: 0;
+  }
+}
+
+/* ---- Workspace (ground) ---- */
+
+.mcd-workspace {
+  grid-area: workspace;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-4);
+  padding: var(--sys-space-5) var(--sys-space-6) var(--sys-space-6);
+}
+
+/* The instruction sits on the ground above the card, lined up with the card's own content edge. */
+.mcd-drag-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-space-3);
+  padding: 0 var(--sys-space-7);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--sys-text-secondary);
+}
+
+.mcd-drag-hint svg {
+  flex-shrink: 0;
+  color: var(--sys-accent-hover);
+}
+
+.mcd-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.mcd-chart-card {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-5);
+  padding: var(--sys-space-7) var(--sys-space-7) var(--sys-space-5);
+}
+
+.mcd-chart-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sys-space-7);
+}
+
+.mcd-chart-id {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-3);
+}
+
+.mcd-chart-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sys-space-4);
+  min-width: 0;
+}
+
+.mcd-ticker {
+  font-family: var(--font-nova-mono, "IBM Plex Mono"), monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--sys-text-secondary);
+}
+
+.mcd-chart-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mcd-quote {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: var(--sys-space-4);
+  row-gap: var(--sys-space-1);
+}
+
+/* Operational pulse: legible at a glance, not theatrical. */
+.mcd-price {
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--sys-text-primary);
+}
+
+.mcd-currency {
+  font-size: var(--sys-type-caption);
+  color: var(--sys-text-secondary);
+  margin-left: calc(-1 * var(--sys-space-2));
+}
+
+.mcd-change {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--sys-text-secondary);
+}
+
+.mcd-change[data-trend="up"] {
+  color: var(--sys-sem-sage);
+}
+
+.mcd-change[data-trend="down"] {
+  color: var(--sys-sem-danger-hover);
+}
+
+.mcd-chart-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sys-space-2);
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.mcd-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sys-space-2);
+}
+
+.mcd-last-bar {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mcd-chart-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sys-space-4);
+  margin-left: calc(-1 * var(--sys-space-3));
+}
+
+.mcd-ranges {
+  display: flex;
+  gap: var(--sys-space-1);
+}
+
+.mcd-plot-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  cursor: crosshair;
+}
+
+.mcd-plot {
+  position: absolute;
+  inset: 0;
+}
+
+.mcd-plot-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+/* ---- Stock summary: part of the stock's card, between its header and the chart ---- */
+
+.mcd-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-4);
+}
+
+.mcd-summary-about {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sys-space-2);
+  max-width: 112ch;
+}
+
+.mcd-summary-description {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--sys-text-secondary);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.mcd-summary-description[data-expanded] {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: none;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.mcd-summary-more {
+  flex-shrink: 0;
+  margin-bottom: -4px;
+}
+
+.mcd-summary-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sys-space-3) var(--sys-space-8);
+  margin: 0;
+}
+
+.mcd-summary-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mcd-summary-figure dt {
+  font-size: var(--sys-type-caption);
+  color: var(--sys-text-secondary);
+}
+
+.mcd-summary-figure dd {
+  margin: 0;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--sys-text-primary);
+  white-space: nowrap;
+}
+
+.mcd-summary-figure dd[data-empty] {
+  font-weight: 400;
+  color: var(--sys-text-secondary);
+}
+
+.mcd-summary-unavailable {
+  font-style: normal;
+}
+
+.mcd-summary-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mcd-summary-skeleton span {
+  display: block;
+  height: 12px;
+  border-radius: var(--sys-radius-sm);
+  background: var(--sys-hair-1);
+  animation: mcd-pulse 1.4s ease-in-out infinite;
+}
+
+.mcd-summary-skeleton span:nth-child(1) {
+  width: min(92ch, 92%);
+}
+
+.mcd-summary-skeleton span:nth-child(2) {
+  width: min(60ch, 60%);
+}
+
+.mcd-summary-skeleton-figures span {
+  height: 30px;
+  width: min(70ch, 70%);
+  margin-top: 4px;
+}
+
+@keyframes mcd-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---- Right slot: empty until a stretch is selected; the chat panel fills it ---- */
+
+.mcd-context {
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mcd-context[data-open="true"] {
+  width: 380px;
+  margin-left: var(--sys-space-6);
+  overflow: visible;
+}
+
+.mcd-chat {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.mcd-chat-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-3);
+  padding: var(--sys-space-6) var(--sys-space-6) var(--sys-space-5);
+  border-bottom: 1px solid var(--sys-hair-1);
+}
+
+.mcd-chat-id {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-space-3);
+  min-width: 0;
+}
+
+.mcd-chat-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mcd-chat-close {
+  flex-shrink: 0;
+  margin-right: calc(-1 * var(--sys-space-3));
+}
+
+.mcd-chat-window {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Figures are read, not scanned: label above value, tabular digits so a refresh does not jitter. */
+.mcd-chat-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sys-space-3) var(--sys-space-5);
+  margin: 0;
+}
+
+.mcd-chat-stats dt {
+  font-size: var(--sys-type-caption);
+  color: var(--sys-text-secondary);
+}
+
+.mcd-chat-stats dd {
+  margin: 0;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--sys-text-primary);
+}
+
+.mcd-chat-stats dd[data-trend="up"] {
+  color: var(--sys-sem-sage);
+}
+
+.mcd-chat-stats dd[data-trend="down"] {
+  color: var(--sys-sem-danger-hover);
+}
+
+.mcd-chat-scroll {
+  flex: 1;
+  min-height: 0;
+}
+
+.mcd-chat-empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-5);
+  padding: var(--sys-space-5) var(--sys-space-6);
+}
+
+.mcd-chat-suggestions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sys-space-2);
+}
+
+/* Chips rest borderless by design; a hairline (colour only, no layout shift) tells the eye these are buttons. */
+.mcd-chat-suggestions > button {
+  border-color: var(--sys-hair-2);
+}
+
+.mcd-chat-thread {
+  padding: var(--sys-space-5) var(--sys-space-6);
+}
+
+.mcd-chat-turn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-4);
+}
+
+.mcd-chat-working {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-space-3);
+}
+
+.mcd-chat-paragraph {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The library's own `prose p + p` gap (--sys-space-6) is layered CSS, and this file's unlayered `p { margin: 0 }` reset outranks it. */
+.mcd-chat-paragraph + .mcd-chat-paragraph {
+  margin-top: var(--sys-space-6);
+}
+
+.mcd-chat-sources {
+  list-style: decimal;
+  margin: var(--sys-space-4) 0 0;
+  padding-left: var(--sys-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-space-2);
+  font-size: var(--sys-type-caption);
+  color: var(--sys-text-secondary);
+}
+
+.mcd-chat-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sys-space-3);
+  padding: var(--sys-space-4) var(--sys-space-5) var(--sys-space-5);
+  border-top: 1px solid var(--sys-hair-1);
+}
+
+.mcd-chat-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.mcd-chat-input textarea {
+  resize: none;
+}
+
+.mcd-chat-send {
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mcd-row-change,
+  .mcd-row-remove {
+    transition: none;
+  }
+  .mcd-summary-skeleton span,
+  .mcd-suggest {
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .mcd-root {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .mcd-source {
+    display: none;
+  }
+}

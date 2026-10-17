@@ -1,0 +1,17 @@
+{
+  // The Cloudflare Worker: server/worker.ts and everything it imports, against the Workers runtime types that
+  // `wrangler types` generates for wrangler.jsonc's compatibility date (worker-configuration.d.ts). No DOM and no
+  // Node types, so shared server code that reaches for a Node-only API fails here.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "types": ["./worker-configuration.d.ts"]
+  },
+  "include": ["server/worker.ts"]
+}

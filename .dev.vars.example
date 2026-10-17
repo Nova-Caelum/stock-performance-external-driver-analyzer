@@ -1,0 +1,6 @@
+# Local secrets for `corepack pnpm dev:worker` (wrangler dev). Copy to .dev.vars (gitignored) and fill in real values;
+# never commit them. On Cloudflare these are Worker secrets: `wrangler secret put <NAME>`.
+OPENROUTER_API_KEY=replace-with-your-openrouter-key
+# Optional: failed chat calls are reported to this Telegram bot and chat. Leave blank to turn alerts off.
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
